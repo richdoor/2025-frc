@@ -21,6 +21,7 @@ import java.io.File;
 import swervelib.SwerveInputStream;
 
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
+import frc.robot.subsystems.swervedrive.ClawSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -32,11 +33,13 @@ public class RobotContainer
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
+  final         CommandXboxController mechXbox = new CommandXboxController(1);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
 
   private final LiftSubsystem m_lift = new LiftSubsystem();
+  private final ClawSubsystem m_claw = new ClawSubsystem();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -156,8 +159,12 @@ public class RobotContainer
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(Commands.none());
 
-      driverXbox.leftBumper().whileTrue(m_lift.raiseLift());
-      driverXbox.rightBumper().whileTrue(m_lift.lowerLift());
+      mechXbox.leftBumper().whileTrue(m_lift.raiseLift());
+      mechXbox.rightBumper().whileTrue(m_lift.lowerLift());
+      mechXbox.leftTrigger().whileTrue(m_claw.ClawDown());
+      mechXbox.rightTrigger().whileTrue(m_claw.ClawUp());
+      mechXbox.y().whileTrue(m_claw.wheelForward());
+      mechXbox.a().whileTrue(m_claw.wheelBackward());
     }
 
   }

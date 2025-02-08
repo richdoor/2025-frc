@@ -59,7 +59,7 @@ public final class Constants
   public static class ClawConstants
   {
     public static final int kRotationalMotor = 17;
-    public static final int kWheelsMotor = 18;
+    public static final int kWheelMotor = 18;
     public static final double kRotationalSpeed = 0.5;
     public static final double kWheelSpeed = 0.5;
   }

@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.swervedrive;
 
-import static frc.robot.Constants.LiftConstants.*;
+import static frc.robot.Constants.ClawConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,17 +15,16 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 
 
-public class LiftSubsystem extends SubsystemBase {
-  TalonFX m_leftLiftMotor;
-  TalonFX m_rightLiftMotor;
+public class ClawSubsystem extends SubsystemBase {
+  TalonFX m_RotationalMotor;
+  TalonFX m_WheelMotor;
 
-  public LiftSubsystem() {
-    m_leftLiftMotor = new TalonFX(kLift1ID);
-    m_rightLiftMotor = new TalonFX(kLift2ID);
+  public ClawSubsystem() {
+    m_RotationalMotor = new TalonFX(kRotationalMotor);
+    m_WheelMotor = new TalonFX(kWheelMotor);
     
 
     //right is the leader, left is the follower
-    m_leftLiftMotor.setControl(new Follower(m_rightLiftMotor.getDeviceID(), false));
   }
 
   /**
@@ -36,41 +35,79 @@ public class LiftSubsystem extends SubsystemBase {
    * method used here, to create these commands. 
    */
 
-  public Command raiseLift() {
+  public Command ClawUp() {
     // The startEnd helper method takes a method to call when the command is initialized and one to
     // call when it ends
     return this.startEnd(
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
-          setLiftSpeed(kLiftSpeed);
+          setClawRotationSpeed(kRotationalSpeed);
         },
         // When the command stops, stop the wheels
         () -> {
-          stopLift();
+          stopClawRotation();
         });
   }
 
-  public Command lowerLift() {
+  public Command ClawDown() {
     // The startEnd helper method takes a method to call when the command is initialized and one to
     // call when it ends
     return this.startEnd(
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
-          setLiftSpeed(-kLiftSpeed);
+          setClawRotationSpeed(-kRotationalSpeed);
         },
         // When the command stops, stop the wheels
         () -> {
-          stopLift();
+          stopClawRotation();
+        });
+  }
+
+  public Command wheelForward() {
+    // The startEnd helper method takes a method to call when the command is initialized and one to
+    // call when it ends
+    return this.startEnd(
+        // When the command is initialized, set the wheels to the intake speed values
+        () -> {
+          setClawWheelSpeed(kWheelSpeed);
+        },
+        // When the command stops, stop the wheels
+        () -> {
+          stopClawWheel();
+        });
+  }
+
+  public Command wheelBackward() {
+    // The startEnd helper method takes a method to call when the command is initialized and one to
+    // call when it ends
+    return this.startEnd(
+        // When the command is initialized, set the wheels to the intake speed values
+        () -> {
+          setClawWheelSpeed(-kWheelSpeed);
+        },
+        // When the command stops, stop the wheels
+        () -> {
+          stopClawWheel();
         });
   }
   // An accessor method to set the speed (technically the output percentage) of the launch wheel
-  public void setLiftSpeed(double speed) {
-    m_rightLiftMotor.set(speed);
+  public void setClawRotationSpeed(double speed) {
+    m_RotationalMotor.set(speed);
   }
 
   // A helper method to stop both wheels. You could skip having a method like this and call the
   // individual accessors with speed = 0 instead
-  public void stopLift() {
-    m_rightLiftMotor.set(0);
+  public void stopClawRotation() {
+    m_RotationalMotor.set(0);
+  }
+
+  public void setClawWheelSpeed(double speed) {
+    m_WheelMotor.set(speed);
+  }
+
+  // A helper method to stop both wheels. You could skip having a method like this and call the
+  // individual accessors with speed = 0 instead
+  public void stopClawWheel() {
+    m_WheelMotor.set(0);
   }
 }
