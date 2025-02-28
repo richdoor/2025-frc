@@ -16,16 +16,16 @@ import com.ctre.phoenix6.controls.Follower;
 
 
 public class LiftSubsystem extends SubsystemBase {
-  TalonFX m_leftLiftMotor;
-  TalonFX m_rightLiftMotor;
+  public TalonFX m_liftFollower;
+  public TalonFX m_liftLeader;
 
   public LiftSubsystem() {
-    m_leftLiftMotor = new TalonFX(kLift1ID);
-    m_rightLiftMotor = new TalonFX(kLift2ID);
+    m_liftFollower = new TalonFX(kLift1ID);
+    m_liftLeader = new TalonFX(kLift2ID);
     
 
     //right is the leader, left is the follower
-    m_leftLiftMotor.setControl(new Follower(m_rightLiftMotor.getDeviceID(), false));
+    m_liftFollower.setControl(new Follower(m_liftLeader.getDeviceID(), false));
   }
 
   /**
@@ -65,12 +65,12 @@ public class LiftSubsystem extends SubsystemBase {
   }
   // An accessor method to set the speed (technically the output percentage) of the launch wheel
   public void setLiftSpeed(double speed) {
-    m_rightLiftMotor.set(speed);
+    m_liftLeader.set(speed);
   }
 
   // A helper method to stop both wheels. You could skip having a method like this and call the
   // individual accessors with speed = 0 instead
   public void stopLift() {
-    m_rightLiftMotor.set(0);
+    m_liftLeader.set(0);
   }
 }

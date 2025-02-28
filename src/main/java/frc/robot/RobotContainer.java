@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -22,6 +23,10 @@ import swervelib.SwerveInputStream;
 
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
+import frc.robot.commands.CoralIntake;
+import frc.robot.commands.SetClawPosition;
+import frc.robot.commands.SetLiftPosition;
+import frc.robot.Constants.LiftConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -159,12 +164,20 @@ public class RobotContainer
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(Commands.none());
 
-      mechXbox.leftBumper().whileTrue(m_lift.raiseLift());
-      mechXbox.rightBumper().whileTrue(m_lift.lowerLift());
-      mechXbox.leftTrigger().whileTrue(m_claw.ClawDown());
-      mechXbox.rightTrigger().whileTrue(m_claw.ClawUp());
-      mechXbox.y().whileTrue(m_claw.wheelForward());
-      mechXbox.a().whileTrue(m_claw.wheelBackward());
+      //mechXbox.leftBumper().whileTrue(m_lift.raiseLift());
+      //mechXbox.rightBumper().whileTrue(m_lift.lowerLift());
+      //mechXbox.leftBumper().whileTrue(m_claw.raiseClaw());
+      //mechXbox.rightBumper().whileTrue(m_claw.lowerClaw());
+      mechXbox.rightTrigger().whileTrue(m_claw.wheelForward());
+      mechXbox.leftTrigger().whileTrue(new CoralIntake(m_claw));
+
+      mechXbox.a().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint1));
+      mechXbox.x().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint2));
+      mechXbox.y().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint3));
+      mechXbox.b().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint4));
+
+      mechXbox.leftBumper().onTrue(new SetClawPosition(m_claw, ClawConstants.kClawSetpoint1));
+      mechXbox.rightBumper().onTrue(new SetClawPosition(m_claw, ClawConstants.kClawSetpoint2));
     }
 
   }

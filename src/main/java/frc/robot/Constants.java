@@ -53,15 +53,31 @@ public final class Constants
   {
     public static final int kLift1ID = 15;
     public static final int kLift2ID = 16;
-    public static final double kLiftSpeed = 0.5;
+    public static final double kLiftSpeed = 0.8;
+
+    public static final double kLiftSetpoint1 = 50;
+    public static final double kLiftSetpoint2 = 70;
+    public static final double kLiftSetpoint3 = 90;
+    public static final double kLiftSetpoint4 = 110;
+    public static final double kEps_lift = 3;
   }
 
   public static class ClawConstants
   {
-    public static final int kRotationalMotor = 17;
-    public static final int kWheelMotor = 18;
+    public static final int kRotationalMotorID = 17;
+    public static final int kWheelMotorID = 18;
+    public static final int kCoralSensorID = 14;
+    public static final int kClawEncoderID = 19;
+    
     public static final double kRotationalSpeed = 0.5;
     public static final double kWheelSpeed = 0.5;
+    public static final double kEps_claw = 3;
+
+    public static final double kClawSetpoint1 = 50;
+    public static final double kClawSetpoint2 = 70;
+
+    public static final double kCoralDist = 10;
+    public static final double kAddedRotations = 10;
   }
   
 }

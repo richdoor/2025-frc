@@ -10,16 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
 
 
-public class Lift extends Command {
+public class SetLiftPosition extends Command {
   LiftSubsystem m_lift;
-  double speed;
-  int level;
+  double setpoint;
 
   /** Creates a new Command. */
-  public Lift(LiftSubsystem lift, double speed, int level) {
+  public SetLiftPosition(LiftSubsystem lift, double setpoint) {
     m_lift = lift;
-    this.speed = speed;
-    this.level = level;
+    this.setpoint = setpoint;
 
     //means this command will take priority over others using same subsystem
     addRequirements(m_lift);
@@ -38,7 +36,15 @@ public class Lift extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    System.out.println(m_lift.m_liftLeader.getPosition().getValueAsDouble());
+    if (m_lift.m_liftLeader.getPosition().getValueAsDouble() < setpoint - kEps_lift)
+    {
+      m_lift.raiseLift();
+    }
+    else if (m_lift.m_liftLeader.getPosition().getValueAsDouble() > setpoint + kEps_lift)
+    {
+      m_lift.lowerLift();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -51,6 +57,7 @@ public class Lift extends Command {
   @Override
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
-    return false;
+    
+    return (m_lift.m_liftLeader.getPosition().getValueAsDouble() < setpoint + kEps_lift)&&(m_lift.m_liftLeader.getPosition().getValueAsDouble() > setpoint - kEps_lift);
   }
 }

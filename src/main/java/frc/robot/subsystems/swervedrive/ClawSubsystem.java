@@ -8,6 +8,9 @@ package frc.robot.subsystems.swervedrive;
 import static frc.robot.Constants.ClawConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANrange;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -17,12 +20,18 @@ import com.ctre.phoenix6.controls.Follower;
 
 
 public class ClawSubsystem extends SubsystemBase {
-  TalonFX m_RotationalMotor;
-  TalonFX m_WheelMotor;
+  public TalonFX m_RotationalMotor;
+  public TalonFX m_WheelMotor;
+
+  public CANcoder m_clawPosition;
+  public CANrange m_coralDist;
 
   public ClawSubsystem() {
-    m_RotationalMotor = new TalonFX(kRotationalMotor);
-    m_WheelMotor = new TalonFX(kWheelMotor);
+    m_RotationalMotor = new TalonFX(kRotationalMotorID);
+    m_WheelMotor = new TalonFX(kWheelMotorID);
+
+    m_clawPosition = new CANcoder(kClawEncoderID);
+    m_coralDist = new CANrange(kCoralSensorID);
     
 
     //right is the leader, left is the follower
@@ -36,7 +45,7 @@ public class ClawSubsystem extends SubsystemBase {
    * method used here, to create these commands. 
    */
 
-  public Command ClawUp() {
+  public Command raiseClaw() {
     // The startEnd helper method takes a method to call when the command is initialized and one to
     // call when it ends
     return this.startEnd(
@@ -50,7 +59,7 @@ public class ClawSubsystem extends SubsystemBase {
         });
   }
 
-  public Command ClawDown() {
+  public Command lowerClaw() {
     // The startEnd helper method takes a method to call when the command is initialized and one to
     // call when it ends
     return this.startEnd(
