@@ -20,13 +20,19 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+
 
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
 import frc.robot.commands.CoralIntake;
+import frc.robot.commands.PID_SetClawPosition;
+import frc.robot.commands.PID_SetLiftPosition;
 import frc.robot.commands.SetClawPosition;
 import frc.robot.commands.SetLiftPosition;
 import frc.robot.Constants.LiftConstants;
+import frc.robot.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -45,6 +51,10 @@ public class RobotContainer
 
   private final LiftSubsystem m_lift = new LiftSubsystem();
   private final ClawSubsystem m_claw = new ClawSubsystem();
+
+  private final Limelight m_limelight = new Limelight(8, 8, 0);
+
+  UsbCamera hangCamera;
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -116,7 +126,7 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-
+    hangCamera = CameraServer.startAutomaticCapture();
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
@@ -165,19 +175,30 @@ public class RobotContainer
       //driverXbox.rightBumper().onTrue(Commands.none());
 
       //mechXbox.leftBumper().whileTrue(m_lift.raiseLift());
-      //mechXbox.rightBumper().whileTrue(m_lift.lowerLift());
-      //mechXbox.leftBumper().whileTrue(m_claw.raiseClaw());
-      //mechXbox.rightBumper().whileTrue(m_claw.lowerClaw());
-      mechXbox.rightTrigger().whileTrue(m_claw.wheelForward());
-      mechXbox.leftTrigger().whileTrue(new CoralIntake(m_claw));
+      mechXbox.rightBumper().whileTrue(m_lift.lowerLift());
+      //mechXbox.leftTrigger().whileTrue(m_claw.raiseClaw());
+      //mechXbox.rightTrigger().whileTrue(m_claw.lowerClaw());
+      mechXbox.povUp().whileTrue(m_claw.setLimelightPipeline());
+     mechXbox.povLeft().whileTrue(m_claw.wheelForward());
+      mechXbox.povRight().whileTrue(m_claw.wheelBackward());
 
-      mechXbox.a().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint1));
-      mechXbox.x().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint2));
-      mechXbox.y().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint3));
-      mechXbox.b().onTrue(new SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint4));
+      mechXbox.leftBumper().whileTrue(new SetLiftPosition(m_lift, 0));
+      //mechXbox.leftTrigger().whileTrue(new SetClawPosition(m_claw, 0));
 
-      mechXbox.leftBumper().onTrue(new SetClawPosition(m_claw, ClawConstants.kClawSetpoint1));
-      mechXbox.rightBumper().onTrue(new SetClawPosition(m_claw, ClawConstants.kClawSetpoint2));
+      // mechXbox.rightTrigger().whileTrue(m_claw.wheelForward());
+      // mechXbox.leftTrigger().whileTrue(new CoralIntake(m_claw));
+
+       mechXbox.a().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint1));
+       mechXbox.x().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint2));
+       mechXbox.y().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint3));
+       mechXbox.b().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint4));
+
+      mechXbox.leftTrigger().whileTrue(new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint1));
+      mechXbox.rightTrigger().whileTrue(new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint2));
+      mechXbox.povDown().whileTrue(new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint3));
+    
+      driverXbox.leftTrigger().whileTrue(m_lift.raiseLift());
+      driverXbox.rightTrigger().whileTrue(m_lift.lowerLift());
     }
 
   }

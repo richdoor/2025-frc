@@ -8,15 +8,18 @@ import static frc.robot.Constants.LiftConstants.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LiftConstants;
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
 
 
-public class SetLiftPosition extends Command {
+public class PID_SetLiftPosition extends Command {
   LiftSubsystem m_lift;
   double setpoint;
+  private double error;
+
 
   /** Creates a new Command. */
-  public SetLiftPosition(LiftSubsystem lift, double setpoint) {
+  public PID_SetLiftPosition(LiftSubsystem lift, double setpoint) {
     m_lift = lift;
     this.setpoint = setpoint;
 
@@ -35,24 +38,35 @@ public class SetLiftPosition extends Command {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
-
-  //TO DO: -make a max as to not stress the motors/overextend elevator
-  //       -make a min/slow down zone to avoid crashing into base (maybe PID loop)
   @Override
   public void execute() {
     System.out.println("lift pos:" + m_lift.m_liftLeader.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Relative Lift Pos", m_lift.m_liftLeader.getPosition().getValueAsDouble());
-    /* 
-    if (m_lift.m_liftLeader.getPosition().getValueAsDouble() < setpoint - kEps_lift)
+
+    double maxSpeed;
+
+    error = setpoint - m_lift.m_liftLeader.getPosition().getValueAsDouble();
+    if (error > 0)
     {
-      m_lift.raiseLift();
+      maxSpeed = kLiftRaiseSpeed;
     }
-    else if (m_lift.m_liftLeader.getPosition().getValueAsDouble() > setpoint + kEps_lift)
+    else
     {
-      m_lift.lowerLift();
+      maxSpeed = kLiftLowerSpeed;
     }
-      */
-      //m_lift.setLiftSpeed(kLiftSpeed);
+    double slowDown = kLiftSlowDown;
+
+    double kp = 1/slowDown;
+    double speedPercent = kp*error;
+    double setSpeed = speedPercent*maxSpeed;
+    
+    if (Math.abs(setSpeed) > maxSpeed)
+    {
+      setSpeed = maxSpeed*Math.signum(setSpeed);
+    }
+
+    m_lift.m_liftLeader.set(setSpeed);
+      
   }
 
   // Called once the command ends or is interrupted.
@@ -66,7 +80,7 @@ public class SetLiftPosition extends Command {
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
     
-    //return (m_lift.m_liftLeader.getPosition().getValueAsDouble() < setpoint + kEps_lift)&&(m_lift.m_liftLeader.getPosition().getValueAsDouble() > setpoint - kEps_lift);
+    //return (m_lift.m_liftLeader.getPosition().getValueAsDouble() < setpoint + kEps_claw)&&(m_lift.m_liftLeader.getPosition().getValueAsDouble() > setpoint - kEps_claw);
     return false;
   }
 }

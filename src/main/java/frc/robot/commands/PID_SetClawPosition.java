@@ -12,12 +12,14 @@ import frc.robot.Constants.ClawConstants;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
 
 
-public class SetClawPosition extends Command {
+public class PID_SetClawPosition extends Command {
   ClawSubsystem m_claw;
   double setpoint;
+  private double error;
+
 
   /** Creates a new Command. */
-  public SetClawPosition(ClawSubsystem claw, double setpoint) {
+  public PID_SetClawPosition(ClawSubsystem claw, double setpoint) {
     m_claw = claw;
     this.setpoint = setpoint;
 
@@ -41,15 +43,21 @@ public class SetClawPosition extends Command {
     System.out.println("claw pos:" + m_claw.m_RotationalMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Relative Claw Pos", m_claw.m_RotationalMotor.getPosition().getValueAsDouble());
 
-    if (m_claw.m_RotationalMotor.getPosition().getValueAsDouble() < setpoint - kEps_claw)
-    {
-      m_claw.setClawRotationSpeed(kRotationalSpeed);
-    }
-    else if (m_claw.m_RotationalMotor.getPosition().getValueAsDouble() > setpoint + kEps_claw)
-    {
-      m_claw.setClawRotationSpeed(-kRotationalSpeed);
-    }
+    double maxSpeed = kRotationalSpeed;
+    double slowDown = kAngleSlowDown;
+
+    error = setpoint - m_claw.m_RotationalMotor.getPosition().getValueAsDouble();
+
+    double kp = 1/slowDown;
+    double speedPercent = kp*error;
+    double setSpeed = speedPercent*maxSpeed;
     
+    if (Math.abs(setSpeed) > maxSpeed)
+    {
+      setSpeed = maxSpeed*Math.signum(setSpeed);
+    }
+
+    m_claw.m_RotationalMotor.set(setSpeed);
       
   }
 

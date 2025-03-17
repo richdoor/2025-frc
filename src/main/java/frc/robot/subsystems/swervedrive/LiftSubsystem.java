@@ -42,7 +42,7 @@ public class LiftSubsystem extends SubsystemBase {
     return this.startEnd(
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
-          setLiftSpeed(kLiftSpeed);
+          setLiftSpeed(kLiftRaiseSpeed);
         },
         // When the command stops, stop the wheels
         () -> {
@@ -56,7 +56,7 @@ public class LiftSubsystem extends SubsystemBase {
     return this.startEnd(
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
-          setLiftSpeed(-kLiftSpeed);
+          setLiftSpeed(-kLiftLowerSpeed);
         },
         // When the command stops, stop the wheels
         () -> {

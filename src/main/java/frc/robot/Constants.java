@@ -51,30 +51,34 @@ public final class Constants
 
   public static class LiftConstants
   {
-    public static final int kLift1ID = 15;
-    public static final int kLift2ID = 16;
-    public static final double kLiftSpeed = 0.8;
+    public static final int kLift1ID = 17;
+    public static final int kLift2ID = 18;
+    public static final double kLiftRaiseSpeed = 0.3;
+    public static final double kLiftLowerSpeed = 0.07;
 
-    public static final double kLiftSetpoint1 = 50;
-    public static final double kLiftSetpoint2 = 70;
-    public static final double kLiftSetpoint3 = 90;
-    public static final double kLiftSetpoint4 = 110;
-    public static final double kEps_lift = 3;
+    public static final double kLiftSetpoint1 = 0;
+    public static final double kLiftSetpoint2 = 10.4;
+    public static final double kLiftSetpoint3 = 23;
+    public static final double kLiftSetpoint4 = 36;
+    public static final double kEps_lift = 5;
+    public static final double kLiftSlowDown = 5;
   }
 
   public static class ClawConstants
   {
-    public static final int kRotationalMotorID = 17;
-    public static final int kWheelMotorID = 18;
+    public static final int kRotationalMotorID = 15;
+    public static final int kWheelMotorID = 16;
     public static final int kCoralSensorID = 14;
     public static final int kClawEncoderID = 19;
     
-    public static final double kRotationalSpeed = 0.5;
-    public static final double kWheelSpeed = 0.5;
+    public static final double kRotationalSpeed = 0.1;
+    public static final double kWheelSpeed = 0.2;
     public static final double kEps_claw = 3;
+    public static final double kAngleSlowDown = 5;
 
-    public static final double kClawSetpoint1 = 50;
-    public static final double kClawSetpoint2 = 70;
+    public static final double kClawSetpoint1 = 0;
+    public static final double kClawSetpoint2 = 4;
+    public static final double kClawSetpoint3 = 22;
 
     public static final double kCoralDist = 10;
     public static final double kAddedRotations = 10;

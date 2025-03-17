@@ -18,19 +18,25 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 
+import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
+
+import frc.robot.Limelight;
 
 public class ClawSubsystem extends SubsystemBase {
   public TalonFX m_RotationalMotor;
   public TalonFX m_WheelMotor;
 
-  public CANcoder m_clawPosition;
+  //public SparkAbsoluteEncoder m_clawPosition;
   public CANrange m_coralDist;
+
+  public Limelight m_limelight = new Limelight(8, 8, 0);
 
   public ClawSubsystem() {
     m_RotationalMotor = new TalonFX(kRotationalMotorID);
     m_WheelMotor = new TalonFX(kWheelMotorID);
 
-    m_clawPosition = new CANcoder(kClawEncoderID);
+    // m_clawPosition = new SparkAbsoluteEncoder(kClawEncoderID);
     m_coralDist = new CANrange(kCoralSensorID);
     
 
@@ -51,7 +57,7 @@ public class ClawSubsystem extends SubsystemBase {
     return this.startEnd(
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
-          setClawRotationSpeed(kRotationalSpeed);
+          setClawRotationSpeed(-kRotationalSpeed);
         },
         // When the command stops, stop the wheels
         () -> {
@@ -65,7 +71,7 @@ public class ClawSubsystem extends SubsystemBase {
     return this.startEnd(
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
-          setClawRotationSpeed(-kRotationalSpeed);
+          setClawRotationSpeed(kRotationalSpeed);
         },
         // When the command stops, stop the wheels
         () -> {
@@ -120,4 +126,20 @@ public class ClawSubsystem extends SubsystemBase {
   public void stopClawWheel() {
     m_WheelMotor.set(0);
   }
+
+ 
+  public Command setLimelightPipeline() {
+    // The startEnd helper method takes a method to call when the command is initialized and one to
+    // call when it ends
+    return this.startEnd(
+        // When the command is initialized, set the wheels to the intake speed values
+        () -> {
+          m_limelight.limelightTable.getEntry("pipeline").setNumber(1);
+        },
+        // When the command stops, stop the wheels
+        () -> {
+          m_limelight.limelightTable.getEntry("pipeline").setNumber(0);
+        });
+  }
+        
 }
