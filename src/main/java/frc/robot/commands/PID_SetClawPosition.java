@@ -40,7 +40,7 @@ public class PID_SetClawPosition extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("claw pos:" + m_claw.m_RotationalMotor.getPosition().getValueAsDouble());
+    // System.out.println("claw pos:" + m_claw.m_RotationalMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Relative Claw Pos", m_claw.m_RotationalMotor.getPosition().getValueAsDouble());
 
     double maxSpeed = kRotationalSpeed;

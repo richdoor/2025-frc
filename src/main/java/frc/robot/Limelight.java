@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
     
-    final double limelightHeight, targetHeight, limelightAngle;
-    double xOff, yOff, areaValue, validity, targetDistance;
+    public final double limelightHeight, targetHeight, limelightAngle;
+    public double xOff, yOff, areaValue, validity, targetDistance;
 
     public static NetworkTable limelightTable;
-    NetworkTableEntry xOffEntry, yOffEntry, areaValueEntry, validityEntry;
+    public NetworkTableEntry xOffEntry, yOffEntry, areaValueEntry, validityEntry;
 
     /**
      * Constructs a limelight object

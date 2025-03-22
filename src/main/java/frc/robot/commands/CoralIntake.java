@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.ClawConstants.*;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
@@ -14,9 +15,6 @@ import frc.robot.subsystems.swervedrive.ClawSubsystem;
 public class CoralIntake extends Command {
   ClawSubsystem m_claw;
   double setpoint;
-  boolean addedSpin = false;
-  boolean atSensor;
-  double positionAtSensor;
 
   /** Creates a new Command. */
   public CoralIntake(ClawSubsystem claw) {
@@ -30,17 +28,14 @@ public class CoralIntake extends Command {
   @Override
   public void initialize() {
     m_claw.m_WheelMotor.set(-kWheelSpeed);
-    atSensor = false;
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_claw.m_coralDist.getDistance().getValueAsDouble()<kCoralDist && atSensor ==false)
-    {
-      positionAtSensor = m_claw.m_WheelMotor.getPosition().getValueAsDouble();
-      atSensor = true;
-    }
+    // fluctuate between +- 0.005 from kCoralDist
+
   }
 
   // Called once the command ends or is interrupted.
@@ -53,10 +48,7 @@ public class CoralIntake extends Command {
   @Override
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
-    if (m_claw.m_WheelMotor.getPosition().getValueAsDouble() > positionAtSensor + kAddedRotations)
-    {
-      addedSpin = true;
-    }
-    return (m_claw.m_coralDist.getDistance().getValueAsDouble()<kCoralDist)&&(addedSpin == true);
+
+    return  (m_claw.m_coralDist.getDistance().getValueAsDouble()<=kCoralDist && m_claw.m_coralDist.getDistance().getValueAsDouble()!=0.0);
   }
 }

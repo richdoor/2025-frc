@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-// this is a comment
 
 package frc.robot.subsystems.swervedrive;
 
@@ -100,6 +99,7 @@ public class ClawSubsystem extends SubsystemBase {
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
           setClawWheelSpeed(-kWheelSpeed);
+          System.out.println(m_WheelMotor.getPosition().getValueAsDouble());
         },
         // When the command stops, stop the wheels
         () -> {

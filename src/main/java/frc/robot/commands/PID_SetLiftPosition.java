@@ -40,7 +40,7 @@ public class PID_SetLiftPosition extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("lift pos:" + m_lift.m_liftLeader.getPosition().getValueAsDouble());
+    // System.out.println("lift pos:" + m_lift.m_liftLeader.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Relative Lift Pos", m_lift.m_liftLeader.getPosition().getValueAsDouble());
 
     double maxSpeed;

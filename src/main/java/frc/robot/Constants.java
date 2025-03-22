@@ -53,14 +53,15 @@ public final class Constants
   {
     public static final int kLift1ID = 17;
     public static final int kLift2ID = 18;
-    public static final double kLiftRaiseSpeed = 0.3;
-    public static final double kLiftLowerSpeed = 0.07;
+    public static final double kLiftRaiseSpeed = 0.4;
+    public static final double kLiftLowerSpeed = 0.1;
+    public static final double kLiftHangSpeed = 0.5;
 
     public static final double kLiftSetpoint1 = 0;
-    public static final double kLiftSetpoint2 = 10.4;
-    public static final double kLiftSetpoint3 = 23;
-    public static final double kLiftSetpoint4 = 36;
-    public static final double kEps_lift = 5;
+    public static final double kLiftSetpoint2 = 9.75;
+    public static final double kLiftSetpoint3 = 22;
+    public static final double kLiftSetpoint4 = 41.3;
+    public static final double kEps_lift = 2;
     public static final double kLiftSlowDown = 5;
   }
 
@@ -80,8 +81,23 @@ public final class Constants
     public static final double kClawSetpoint2 = 4;
     public static final double kClawSetpoint3 = 22;
 
-    public static final double kCoralDist = 10;
-    public static final double kAddedRotations = 10;
+    public static final double kCoralDist = 0.1;
+    public static final double kAddedRotations = 3.5;
+  }
+
+  public static class PipelineConstants
+  {
+    public static final int kPipeline_default = 0;
+    public static final int kPipeline_reef = 1;
+    public static final int kPipeline_coralStation = 2;
+    public static final int kPipeline_processor = 3;
+    public static final int kPipeline_barge = 4;
   }
   
+  public static class AutoStrafeConstants
+  {
+    public static final double kTxOffset = 0;
+    public static final double kStrafeEps = 2;
+    public static final double kMaxStrafeSpeed = 0.3;
+  }
 }
