@@ -11,9 +11,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import swervelib.SwerveDrive;
 import frc.robot.Limelight;
+import frc.robot.subsystems.swervedrive.ClawSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.Constants.PipelineConstants;
 import frc.robot.Constants.AutoStrafeConstants;
+
 
 // import frc.robot.subsystems.CANLauncher;
 
@@ -42,7 +44,6 @@ public class AutoStrafe extends Command {
   @Override
   public void initialize() {
     m_Limelight.limelightTable.getEntry("pipeline").setNumber(pipeline);
-
     /*System.out.println("drive command start");
     m_drivetrain.driveCommand(
         ()->{return 0.5;},
@@ -99,12 +100,6 @@ public class AutoStrafe extends Command {
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
     // decorator on the command to end it.
-    //CHECKER
-    boolean inPosition = false;
-    if ((Math.abs(error) < AutoStrafeConstants.kStrafeEps))
-    {
-      inPosition = true;
-    }
-    return inPosition;
+    return (Math.abs(error) < AutoStrafeConstants.kStrafeEps);
   }
 }

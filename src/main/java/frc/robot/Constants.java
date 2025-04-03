@@ -100,4 +100,15 @@ public final class Constants
     public static final double kStrafeEps = 2;
     public static final double kMaxStrafeSpeed = 0.3;
   }
+
+  public static class SetYawConstants
+  {
+    public static final double kYawEps = 3;
+    public static final double kYawSetpoint1 = 0;
+    public static final double kYawSetpoint2 = 60;
+    public static final double kYawSetpoint3 = 120;
+    public static final double kYawSetpoint4 = 180;
+    public static final double kYawSetpoint5 = 240;
+    public static final double kYawSetpoint6 = 300;
+  }
 }

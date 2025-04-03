@@ -26,6 +26,7 @@ public class AutoLineup extends Command {
   double eps_distance;
   double eps_angle;
   double pipeline;
+  double setpoint;
   
 
   // CANLauncher m_ampLauncher;
@@ -66,8 +67,8 @@ public class AutoLineup extends Command {
     //values to tune
     eps_distance = 4.0;
     double maxSpeed_distance = 0.3; 
-    double slowDown_distance = 5; //this is used for the k_p value
-    double desired_distance = 51;
+    double slowDown_distance = 10; //this is used for the k_p value
+    double desired_distance = 35;
 
     //calculate distance from vert angle
     double targetOffsetAngle_Vertical = m_Limelight.yOffEntry.getDouble(0.0);
@@ -93,8 +94,8 @@ public class AutoLineup extends Command {
 
     //ANGLE CONTROLLER
     eps_angle = 4.0;
-    double maxSpeed_angle = 0.5; 
-    double slowDown_angle = 20; //this is used for the k_p value
+    double maxSpeed_angle = 0.2; 
+    double slowDown_angle = 10; //this is used for the k_p value
     double desired_angle = 0;
 
     //calculate angle from vert angle
@@ -134,11 +135,6 @@ public class AutoLineup extends Command {
     // Always return false so the command never ends on it's own. In this project we use a timeout
     // decorator on the command to end it.
     //CHECKER
-    boolean inPosition = false;
-    if ((Math.abs(error_distance) < eps_distance) && (Math.abs(error_angle) < eps_angle))
-    {
-      inPosition = true;
-    }
-    return inPosition;
+    return (Math.abs(error_distance) < eps_distance) && (Math.abs(error_angle) < eps_angle);
   }
 }

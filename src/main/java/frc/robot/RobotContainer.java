@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.PipelineConstants;
+import frc.robot.Constants.SetYawConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -27,11 +29,11 @@ import edu.wpi.first.cscore.UsbCamera;
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
 import frc.robot.commands.AutoStrafe;
+import frc.robot.commands.AutoLineup;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.PID_SetClawPosition;
 import frc.robot.commands.PID_SetLiftPosition;
-import frc.robot.commands.SetClawPosition;
-import frc.robot.commands.SetLiftPosition;
+import frc.robot.commands.SetRobotYaw;
 import frc.robot.Constants.LiftConstants;
 import frc.robot.Limelight;
 
@@ -197,6 +199,7 @@ public class RobotContainer
       driverXbox.leftTrigger().whileTrue(m_lift.lowerLift());
       driverXbox.rightTrigger().whileTrue(m_lift.raiseLift());
       driverXbox.x().whileTrue(new AutoStrafe(drivebase, m_limelight, 1));
+      driverXbox.x().whileTrue(Commands.parallel(new SetRobotYaw(drivebase,SetYawConstants.kYawSetpoint1),new AutoLineup(drivebase, m_limelight, PipelineConstants.kPipeline_reef)));
     }
 
   }
