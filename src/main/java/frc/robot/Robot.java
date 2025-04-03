@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.swervedrive.LiftSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -28,7 +26,6 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
   
-  private LiftSubsystem m_lift;
 
   public Robot()
   {

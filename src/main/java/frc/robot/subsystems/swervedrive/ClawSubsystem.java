@@ -7,18 +7,10 @@ package frc.robot.subsystems.swervedrive;
 import static frc.robot.Constants.ClawConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANrange;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.Follower;
-
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Limelight;
 
@@ -99,7 +91,6 @@ public class ClawSubsystem extends SubsystemBase {
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
           setClawWheelSpeed(-kWheelSpeed);
-          System.out.println(m_WheelMotor.getPosition().getValueAsDouble());
         },
         // When the command stops, stop the wheels
         () -> {

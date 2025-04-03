@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
 
 
-public class CoralIntake extends Command {
+public class CoralShoot extends Command {
   ClawSubsystem m_claw;
   double setpoint;
 
   /** Creates a new Command. */
-  public CoralIntake(ClawSubsystem claw) {
+  public CoralShoot(ClawSubsystem claw) {
     m_claw = claw;
 
     //means this command will take priority over others using same subsystem
@@ -33,7 +33,7 @@ public class CoralIntake extends Command {
   @Override
   public void execute() {
     // fluctuate between +- 0.005 from kCoralDist
-    //System.out.println(m_claw.m_coralDist.getDistance().getValueAsDouble());
+
   }
 
   // Called once the command ends or is interrupted.
@@ -47,6 +47,6 @@ public class CoralIntake extends Command {
   public boolean isFinished() {
     // Always return false so the command never ends on it's own. In this project we use a timeout
 
-    return  (m_claw.m_coralDist.getDistance().getValueAsDouble()<=kCoralDist && m_claw.m_coralDist.getDistance().getValueAsDouble()!=0.0);
+    return  (m_claw.m_coralDist.getDistance().getValueAsDouble()>=kCoralDist || m_claw.m_coralDist.getDistance().getValueAsDouble()!=0.0);
   }
 }

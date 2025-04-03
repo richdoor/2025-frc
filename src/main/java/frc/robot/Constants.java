@@ -53,16 +53,26 @@ public final class Constants
   {
     public static final int kLift1ID = 17;
     public static final int kLift2ID = 18;
-    public static final double kLiftRaiseSpeed = 0.4;
-    public static final double kLiftLowerSpeed = 0.1;
+    public static final double kLiftRaiseSpeed = 0.35;
+    public static final double kLiftLowerSpeed = 0.2;
     public static final double kLiftHangSpeed = 0.5;
 
+    //Coral setpoints
     public static final double kLiftSetpoint1 = 0;
     public static final double kLiftSetpoint2 = 9.75;
     public static final double kLiftSetpoint3 = 22;
     public static final double kLiftSetpoint4 = 41.3;
+
+    //Algae setpoints
+    public static final double kAlgaeSetpoint1 = 16.5;
+    public static final double kAlgaeSetpoint2 = 31;
+    public static final double kAlgaeSetpoint3 = 45;
+
+
     public static final double kEps_lift = 2;
-    public static final double kLiftSlowDown = 5;
+    public static final double kLiftSlowDown = 10;
+  
+    public static final int actuatorPWMID = 0;
   }
 
   public static class ClawConstants
@@ -72,33 +82,37 @@ public final class Constants
     public static final int kCoralSensorID = 14;
     public static final int kClawEncoderID = 19;
     
-    public static final double kRotationalSpeed = 0.1;
-    public static final double kWheelSpeed = 0.2;
+    public static final double kRotationalSpeed = 0.3;
+    public static final double kRotationalShootSpeed = 0.5;
+    public static final double kWheelShootSpeed = 0.8;
+    public static final double kWheelSpeed = 0.3;
     public static final double kEps_claw = 3;
     public static final double kAngleSlowDown = 5;
 
     public static final double kClawSetpoint1 = 0;
     public static final double kClawSetpoint2 = 4;
-    public static final double kClawSetpoint3 = 22;
+    public static final double kClawSetpoint3 = 19;
+    public static final double kClawSetpoint4 = 0;
 
-    public static final double kCoralDist = 0.1;
+    public static final double kCoralDist = 0.055;
     public static final double kAddedRotations = 3.5;
   }
 
   public static class PipelineConstants
   {
     public static final int kPipeline_default = 0;
-    public static final int kPipeline_reef = 1;
+    public static final int kPipeline_reef = 4;
     public static final int kPipeline_coralStation = 2;
     public static final int kPipeline_processor = 3;
-    public static final int kPipeline_barge = 4;
+    public static final int kPipeline_barge = 1;
   }
   
   public static class AutoStrafeConstants
   {
-    public static final double kTxOffset = 0;
     public static final double kStrafeEps = 2;
-    public static final double kMaxStrafeSpeed = 0.3;
+    public static final double kMaxStrafeSpeed = 0.4;
+    public static final double kLeftTarget = -2;
+    public static final double kRightTarget = -5;
   }
 
   public static class SetYawConstants
@@ -110,5 +124,8 @@ public final class Constants
     public static final double kYawSetpoint4 = 180;
     public static final double kYawSetpoint5 = 240;
     public static final double kYawSetpoint6 = 300;
+    public static final double kYawRotateSpeed = 1.0;
+
+    public static final double kAngleSlowDown = 10;
   }
 }

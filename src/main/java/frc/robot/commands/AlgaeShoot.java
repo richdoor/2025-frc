@@ -9,18 +9,21 @@ import static frc.robot.Constants.ClawConstants.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
+import frc.robot.subsystems.swervedrive.LiftSubsystem;
 
 
-public class PID_SetClawPosition extends Command {
+public class AlgaeShoot extends Command {
   ClawSubsystem m_claw;
+  LiftSubsystem m_lift;
   double setpoint;
   private double error;
 
 
   /** Creates a new Command. */
-  public PID_SetClawPosition(ClawSubsystem claw, double setpoint) {
+  public AlgaeShoot(ClawSubsystem claw, double setpoint, LiftSubsystem lift) {
     m_claw = claw;
     this.setpoint = setpoint;
+    m_lift = lift;
 
     //means this command will take priority over others using same subsystem
     addRequirements(m_claw);
@@ -41,10 +44,10 @@ public class PID_SetClawPosition extends Command {
   public void execute() {
     SmartDashboard.putNumber("Relative Claw Pos", m_claw.m_RotationalMotor.getPosition().getValueAsDouble());
 
-    double maxSpeed = kRotationalSpeed;
+    double maxSpeed = kRotationalShootSpeed;
     double slowDown = kAngleSlowDown;
-    double currPos = m_claw.m_RotationalMotor.getPosition().getValueAsDouble();
-    error = setpoint - currPos;
+
+    error = setpoint - m_claw.m_RotationalMotor.getPosition().getValueAsDouble();
 
     double kp = 1/slowDown;
     double speedPercent = kp*error;
@@ -55,24 +58,27 @@ public class PID_SetClawPosition extends Command {
       setSpeed = maxSpeed*Math.signum(setSpeed);
     }
 
-    m_claw.m_RotationalMotor.set(setSpeed);
-/*
-    if (currPos > 17)
+    if (m_lift.m_liftLeader.getPosition().getValueAsDouble() > 20)
     {
-      m_claw.m_WheelMotor.set(0.07);
+      m_claw.m_RotationalMotor.set(setSpeed);
     }
-    else
+
+    if (m_claw.m_RotationalMotor.getPosition().getValueAsDouble() < 15)
     {
-      m_claw.m_WheelMotor.set(0);
+      m_claw.m_WheelMotor.set(-kWheelShootSpeed);
     }
-       */
+    else 
+    {
+      m_claw.m_WheelMotor.set(0.1);
+    }
+      
   }
-    
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_claw.stopClawRotation();
+    m_claw.stopClawWheel();
   }
 
   // Returns true when the command should end.

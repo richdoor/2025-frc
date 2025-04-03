@@ -9,9 +9,6 @@ import static frc.robot.Constants.LiftConstants.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 
 
@@ -22,7 +19,6 @@ public class LiftSubsystem extends SubsystemBase {
   public LiftSubsystem() {
     m_liftFollower = new TalonFX(kLift1ID);
     m_liftLeader = new TalonFX(kLift2ID);
-    
 
     //right is the leader, left is the follower
     m_liftFollower.setControl(new Follower(m_liftLeader.getDeviceID(), false));
@@ -57,20 +53,6 @@ public class LiftSubsystem extends SubsystemBase {
         // When the command is initialized, set the wheels to the intake speed values
         () -> {
           setLiftSpeed(-kLiftLowerSpeed);
-        },
-        // When the command stops, stop the wheels
-        () -> {
-          stopLift();
-        });
-  }
-
-  public Command hang() {
-    // The startEnd helper method takes a method to call when the command is initialized and one to
-    // call when it ends
-    return this.startEnd(
-        // When the command is initialized, set the wheels to the intake speed values
-        () -> {
-          setLiftSpeed(-kLiftHangSpeed);
         },
         // When the command stops, stop the wheels
         () -> {

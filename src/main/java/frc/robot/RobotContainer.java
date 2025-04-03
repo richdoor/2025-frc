@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -15,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AutoStrafeConstants;
 import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PipelineConstants;
@@ -28,14 +28,14 @@ import edu.wpi.first.cscore.UsbCamera;
 
 import frc.robot.subsystems.swervedrive.LiftSubsystem;
 import frc.robot.subsystems.swervedrive.ClawSubsystem;
-import frc.robot.commands.AutoStrafe;
-import frc.robot.commands.AutoLineup;
+import frc.robot.commands.AlgaeShoot;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.PID_SetClawPosition;
 import frc.robot.commands.PID_SetLiftPosition;
 import frc.robot.commands.SetRobotYaw;
+import frc.robot.commands.AutoStrafe;
+import frc.robot.commands.CoralShoot;
 import frc.robot.Constants.LiftConstants;
-import frc.robot.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -55,9 +55,10 @@ public class RobotContainer
   private final LiftSubsystem m_lift = new LiftSubsystem();
   private final ClawSubsystem m_claw = new ClawSubsystem();
 
-  private final Limelight m_limelight = new Limelight(8, 8, 0);
+  private final Limelight m_limelight = new Limelight(9.75, 11.125, 0);
 
-  UsbCamera hangCamera;
+  UsbCamera coralCamera;
+
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -117,7 +118,10 @@ public class RobotContainer
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    NamedCommands.registerCommand("R_ClawPos", new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint2));
+    NamedCommands.registerCommand("L4_LiftPos", new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint4, m_claw));
+    NamedCommands.registerCommand("ShootCoral", new CoralShoot(m_claw));
+    NamedCommands.registerCommand("L1_LiftPos", new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint1, m_claw));
   }
 
   /**
@@ -129,7 +133,7 @@ public class RobotContainer
    */
   private void configureBindings()
   {
-    //hangCamera = CameraServer.startAutomaticCapture();
+    coralCamera = CameraServer.startAutomaticCapture();
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
@@ -139,6 +143,8 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
+
+    
 
     if (RobotBase.isSimulation())
     {
@@ -158,10 +164,10 @@ public class RobotContainer
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      driverXbox.start().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      //driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverXbox.back().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.povUp().whileTrue(drivebase.centerModulesCommand());
     } else
     {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -170,8 +176,6 @@ public class RobotContainer
             new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                             );
         */
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(Commands.none());
 
@@ -179,27 +183,41 @@ public class RobotContainer
       //mechXbox.rightBumper().whileTrue(m_lift.lowerLift());
       //mechXbox.leftTrigger().whileTrue(m_claw.raiseClaw());
       //mechXbox.rightTrigger().whileTrue(m_claw.lowerClaw());
-      mechXbox.povLeft().whileTrue(m_claw.setLimelightPipeline());
+      
       mechXbox.leftTrigger().whileTrue(m_claw.wheelForward());
+      mechXbox.leftBumper().whileTrue(m_claw.wheelBackward());
       mechXbox.rightTrigger().whileTrue(new CoralIntake(m_claw));
       mechXbox.rightBumper().whileTrue(m_claw.wheelBackward());
 
 
-      // mechXbox.rightTrigger().whileTrue(m_claw.wheelForward());
-      mechXbox.a().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint1));
-      mechXbox.x().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint2));
-      mechXbox.y().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint3));
-      mechXbox.b().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint4));
-      mechXbox.back().whileTrue(m_lift.hang());
+      // mechXbox.rightTrigger().whileAWTrue(m_claw.wheelForward());
+      mechXbox.a().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint1, m_claw));
+      mechXbox.x().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint2, m_claw));
+      mechXbox.y().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint3, m_claw));
+      mechXbox.b().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kLiftSetpoint4, m_claw));
+      
+      mechXbox.back().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kAlgaeSetpoint1, m_claw));
+      mechXbox.start().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kAlgaeSetpoint2, m_claw));
+      mechXbox.rightStick().whileTrue(new PID_SetLiftPosition(m_lift, LiftConstants.kAlgaeSetpoint3, m_claw));
 
       mechXbox.povUp().onTrue(new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint1));
       mechXbox.povRight().onTrue(new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint2));
       mechXbox.povDown().onTrue(new PID_SetClawPosition(m_claw, ClawConstants.kClawSetpoint3));
+      mechXbox.povLeft().whileTrue(new AlgaeShoot(m_claw, ClawConstants.kClawSetpoint2, m_lift));
     
       driverXbox.leftTrigger().whileTrue(m_lift.lowerLift());
       driverXbox.rightTrigger().whileTrue(m_lift.raiseLift());
-      driverXbox.x().whileTrue(new AutoStrafe(drivebase, m_limelight, 1));
-      driverXbox.x().whileTrue(Commands.parallel(new SetRobotYaw(drivebase,SetYawConstants.kYawSetpoint1),new AutoLineup(drivebase, m_limelight, PipelineConstants.kPipeline_reef)));
+      
+      driverXbox.povUp().whileTrue(new SetRobotYaw(drivebase, SetYawConstants.kYawSetpoint4));
+      driverXbox.povDown().whileTrue(new SetRobotYaw(drivebase, SetYawConstants.kYawSetpoint1));
+      driverXbox.povUpLeft().whileTrue(new SetRobotYaw(drivebase, SetYawConstants.kYawSetpoint5));
+      driverXbox.povUpRight().whileTrue(new SetRobotYaw(drivebase, SetYawConstants.kYawSetpoint3));
+      driverXbox.povRight().whileTrue(new SetRobotYaw(drivebase, SetYawConstants.kYawSetpoint2));
+      driverXbox.povLeft().whileTrue(new SetRobotYaw(drivebase, SetYawConstants.kYawSetpoint6));
+      driverXbox.x().whileTrue(new AutoStrafe(drivebase, m_limelight, PipelineConstants.kPipeline_reef, AutoStrafeConstants.kLeftTarget));
+      driverXbox.b().whileTrue(new AutoStrafe(drivebase, m_limelight, PipelineConstants.kPipeline_reef, AutoStrafeConstants.kRightTarget));
+    
+      //driverXbox.y().whileTrue(new SetRobotYaw(drivebase,SetYawConstants.kYawSetpoint1).andThen(new AutoStrafe(drivebase, m_limelight, PipelineConstants.kPipeline_reef)));
     }
 
   }
@@ -212,7 +230,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+    return drivebase.getAutonomousCommand("CenterAuto");
   }
 
   public void setMotorBrake(boolean brake)
